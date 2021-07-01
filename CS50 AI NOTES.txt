@@ -1,0 +1,357 @@
+Artificial Intelligence 
+
+16/09/2020 Search - Finding a solution
+Agent - an entitry that perceives and acts upon that environment
+State - a configuration of an agent in its environment
+Actions - choices to take in any given state
+Transition Model - A model that relates the action and the states. e.g. The RESULT function takes in two inputs, the STATE and the ACTION, the output of which is a new STATE
+State Space - every state that can be achieved through different actions, can be simplified as a graph of nodes with arrows linking them
+Goal Test - a way to determine if a current state is the GOAL STATE
+Path Cost - the cost of taking an action or a series of actions
+Node - a data structure to keep track of the state, a parent node (the node before this node), an action (the action that led to this node) and a path cost
+
+Approach - start with a frontier (the initial state) then repeat 1) if frontier is empty, no solution - as there is nowhere else to go, 2) remove a node from the frontier, 3) if node contains goal state, return the solution, 4) expand the node and add resulting nodes to the frontier, 1a) start with an empty explored set, add node to explore sets 1b) check against the explored set to determine if a node should be added to the frontier
+
+You can treat a frontier as a stack which can be emptied (LIFO = depth-first search) or queue (FIFO = breadth first search)
+
+Uninformed Search vs Informed Search - depends on whether the strategy factors in problem-specific knowledge
+Greedy best-first search is one example of an informed search, it uses a heuristic to determine which action to take (e.g. proximity of coordinates to a goal), it may not always give the optimal solution
+A* search uses both the Manhattan distance and the number of steps already taken to make a decision
+Minimax - Max player vs Min Player. Max player logic: A) check all actions and determine its score, B) immediately check how the Min player will react to each of the actions. Iterate A), B) and then calculate the end scores for each path, choose the path that results in the highest score (since you are the Max player). c) score check is based on terminal state
+Alpha-Beta pruning - conditions that check if you need to consider computing further moves down a specific branch, potentially saves on computing
+Depth limited Minimax - a minimax which has an evaluation function to determine utility before reaching an end state
+
+Adverserial scenarios - assign scores to winning states and losing states 
+Initial State - e.g. empty tictactoe board
+Player Function - e.g. determine which player's turn it is
+Actions - e.g. determine which actions the player can take
+Results - e.g. the result of the action
+Terminal - e.g. end states of the game
+Utility - e.g. assign scores to the end state of the game to determine who the winner is 
+ 
+21/09/2020 Knowledge - Using information to make decisions
+
+Knowledge Engineering - defining a problem using logical symbols and connectors 
+
+Sentence - an assertion about the world in knowledge representation language
+
+Propositional logic
+Propositional symbols are used to represent a fact - they are connected by logical connectors (not and or implication biconditional)
+A truth table is linked to show how each propositional symbol is affected by logical connectors
+Implication if P is true but Q is false that means P does not imply Q
+Biconditional if P and Q are the same then return true
+A model assigns propositional symbols with true or false
+Knowledge base - a set of sentences that our AI knows to be true
+Entailments - inferences made based on the statements
+
+
+
+^ = and
+- = not 
+-> = implies
+
+Model Checking - Enumerate all possible models, if in every model where the KB is true and a query is true, the KB is true (accepts the query)
+
+Inference Rules
+
+Modus Ponens - Instead of model checking, check implications, make inferences
+if a -> b
+then if a is true 
+infer b is true
+
+And Elimination:
+if a and b is true
+then infer a is true
+then infer b is true
+
+Double Negation Elimination:
+not (not a)
+then infer a is true
+
+Implication Elimination:
+if a implies b
+then either (not a) or b
+
+Biconditional Elimination:
+a implies b and b implies a
+
+De Morgan's Law
+if not true (a and b)
+then (not a) or (not b)
+
+if not true (a or b)
+then (not a and not b)
+
+Distributive Law
+(a and (b or c))
+(a and b) or (a and c)
+
+Theorem Proving
+initial state: starting knowledge base
+actions: inference rules
+transition model: new knowledge base after inference
+goal test: check statements we are trying to prove
+path cost function: number of steps in proof
+
+Unit Resolution Rule
+if P or Q
+then if not P true 
+infer Q true
+
+if P or Q
+if (not P) or R
+then Q or R
+
+Dijunction = Connected by OR
+Conjunction = Connected by AND
+
+Conjunctive normal form = logical sentence that is a conjunction of clauses
+*all logical formulae can be combined into CNF 
+
+
+Inference by Resolution (Prove something is true by testing a query with the opposite of the query within the clause and resolving it as false)
+First assume the thing we are trying to prove is False and add it to the clause
+Second, resolve the complementary literals to get new clauses
+Third, look for the empty clause (a and not a exist at the same time in the check)
+
+First Order Logic
+Uses two types of symbols - constant symbols and predicate symbols (apply a modifier to a constant symbol or multiple symnbols)
+Existential Quantification - something is true for SOME VALUES of a variable (e.g. there is an A that (BELONGS TO) B)
+Universal Quantification - something is true for ALL VALUES of a variable (e.g. for all X (HUMANS), (BELONGS TO) Y (GRYFFINDOR), THEN DOES NOT BELONG TO Z (HUFFLEPUFF)
+
+Uncertainty - Dealing with Probability
+29/09/2020
+unconditional probability - degree of belief in  a proposition with no evidence
+conditional probability - degree of belief in a proposition with some evidence
+P(a | b) what is the probability of a given that b is true
+P(a | b) = P(a^b)/P(b) of cases where a and b is true, factor out probability that b is true
+random variable - a system (e.g. traffic)
+values - the values in the system (e.g. {none, light, heavy} 
+
+probability distribution:
+P(traffic = none) = 0.1
+P(traffic = light) = 0.2
+P(traffic = heavy) = 0.7
+
+independence:
+knowledge that one event occurs does not affect the probability of other event
+P(a^b) = P(a)P(b)
+
+Bayes Rule:
+P(b|a) = P(a|b) * P(b) / P(a)
+
+Joint Probability 
+		Rain	Not Rain
+Cloud           0.08    0.32   
+
+Not Cloud       0.02    0.58
+
+If its raining and you want to figure out if its cloudy, normalize the P(Rain, Cloud) and P(Rain, Not Cloud)
+
+Or
+P(a V b) = P(a) + P(b) - P(a ^ b)
+
+Marginalization
+P(a) = P(a,b) + P(a,notB)
+
+P(C = cloud)
+P(C= Cloud, R=Rain) + P(C=Cloud, R=notRain)
+
+
+Bayesian Network:
+variables that are connected to each other 
+data structure that captures dependencies between variables
+it is a directed graph
+each node is a variable
+the arrow direction x -> y means x is a parent of y
+parent nodes will be factored in as P(child value | parent value) since the child is dependent on the parent nodes
+if dependent on multiple parent nodes, probablt use ^ 
+
+Inference: given an observation/evidence, calculate a new probability
+Query X: variable for which to compute distribution
+Evidence variable E: observed variables for event e
+Hidden Variables Y: non-evidence, non-query variable
+
+Inference by Enumeration
+Using Bayes rule and Marginalization, generate the probability distribution of hidden variables to answer the query
+
+Goal: Calculate P(X|e) 
+
+Sampling: collect samples through a Bayesian network and that query by counting the samples that answer the query (randomly generate scenario following the probability distribution)
+
+Likelihood weighting: fixed the given conditions and only sample around those fixed variables
+then apply a weight to the sample based on the probability of the evidence associated to it
+
+Markov assumption: current state depends on only a finite fixed number of previous states
+
+Markov chain: predict the next step's state based on the previous step's state
+it is based on a transition model (probability distribtuion matrix between day 1 and day 2)
+
+Sensor model:
+Hidden state (e.g. exact position) and observations (e.g. sensor data)
+
+Hidden Markov model:
+using observations to build a state-observation probability matrix
+the assumption is that the sensor model is only based on the corresponding state
+used for filtering (e.g. given observations, calculate distribution for current state)
+used for prediction (e.g. given observations, calculate distribution for a future state)
+used for smoothing given observations, calculate distribution for past state
+used for most likely explanation (e.g. given observations, what is the corresponding state for each observation)
+
+
+Optimization - Searching for the better - if not best - way
+06/10/2020
+
+Local search - search algorithm that maintains a single node
+objective is a goal, but has an unknown solution
+works by cost minimization
+
+state-space landscape: different states represented by bars, vertical is the score for the objective function (generally you try to find the global max or min and use that as the solution)
+
+hill climbing: choose one state and look at the neighbour states, only move when the neighbour is higher than the current state
+
+start at some initial state
+store in current
+repeat: check neighbours and store in neighbors
+choose the neighbor better than current state? if yes, set as current
+if no then terminate
+
+has many variants, selecting random neighbours, starting at random points, keeping track of local maximums
+
+Annealing
+start with current state
+repeat for n times
+create a temperature function that is based on time
+choose a random neighbour
+calculate delta E based on neighbour
+update current to delta E in this case
+ADD IN A PROBABILITY THAT A WORST NEIGHBOUR IS CHOSEN (this probability function is based on the temperature and delta E)
+
+insights: e.g. as temperature is high, time early, explore neighbours with worse delta Es
+
+Travelling Salesman Problem
+an NP-complete problem (no known effective way to solve the problem)
+defining a neighbour is different here (e.g. switching the arrows that link the nodes)
+
+Linear Programming: Minimize a cost function f(x) with linear equations and linear constraints
+scipy has a linear program optimization library (simplex algorithm)
+
+Constraint Satisfaction Problems
+Each entity is subject to some variable constraints
+Each variable is a node (and each variable has a domain e.g. a set of numbers)
+Lines are drawn between nodes to show there is a constraint between variables
+e.g. in sudoku, the variables are the cells, the domains is 1-9 and the constraints are: this cell can't be this cell etc = this cell can't take on these values
+
+hard constraints vs soft constraints
+MUST have vs preferences
+
+Unary constraints: A != Monday , Course A cannot take on the value Monday
+BInary constraint: A != B, Course A cannot take on the same value(s) as Course B
+Node Consistency: when all the values in a variable's domain satisfy the variable's UNARY constraints (i.e. the solution meets the constraints imposed on a specific node) - this doesn't settle the binary constraints
+To achieve the consistency, one way is to start off with all the values in the domain and remove them one at a time to meet the unary constraints on A
+
+Arc Consistency: ensure that all binary constraints are met
+definition: in order to make X arc-consistent with Y, look at all values that X can take on, ensure that Y has a value remaining
+Revise function ensures arc consistency:
+revised = false
+for x in X.domain
+if no Y.domain satisfies constraint for (X,Y):
+	delete x  form X.domain #make one space for Y
+	revised = True
+return revised
+
+AC-3(csp) takes all the arcs that need to be make consistency
+queue = all arcs in CSP
+while queue is not empty:
+	(X,Y) = Dequeue(queue)
+		if Revise(csp, X,Y):
+			check X.domain == 0 (fail)
+			return false
+		for each Z in X.neighbors - {Y}:
+			Enqueue(Z,X) (put it back in the queue to check for consistency again)
+
+Search Problems:
+initial state
+actions
+transition model
+goal test
+path cost function
+
+Back Tracking Search:
+function backtrack(assignment,csp):
+if assignment complete: return asssignment (terminate)
+set var = some unassigned variable
+for value in domain-values(some value  in the domain):
+	if value consistent with assignment:
+		add {var = value} to assignment
+		result = backtrack(assignment,csp)
+		if result != failure: return result
+	else: remove {var = value} from assignment
+return failure
+
+Inferences can be made (e.g. removing values from the domain for each variable based on the constraints) - this is called maintaining arc-consistency
+calls AC-3 every time we assign a variable to check that the domain of each variable linked to the variable which has been assigned a value - if domain is empty there's a problem
+
+Other smart things to do include choosing variables with a) the smallest domain, or b) the variable that has the highest degree as a starting point to make assignments
+choosing what value to add to a variable? should choose the one that causes the fewest removal of domain values from the neighbouring nodes
+
+
+
+Machine Learning - with information given on a dataset, classify a new data input
+13/10/2020
+supervised learning: given information and lavelled data, approximate a true function f with a hypothetical function h
+
+classification methods: 
+nearest neighbor (choose the nearest point and classify new point in same group as nearest point)
+k-nearest neighbor (choose the k-nearest neighbors and how they are classified to determine how a new point is classified)
+linear regression, find a line that splits dataset into the different classifications (works with weights w that are multiplied linearly to inputs x to generate a value which determines how it is classified. turns out this is the dot product of a weight vector and an input vector)
+perceptron learning rule - given a data point (x,y) update each weight according to wi = wi + a(actual value - estimate)*xi - you can apply a hard thresholdor soft threshold
+support vector machines - help to find the maximum margin separator by finding the 'support vectors' closer to the lines and separating them 
+
+regression methods (supervised task of learning a function that maps an input to an ACTUAL VALUE):
+
+loss function: function that expresses how poorly a hypothesis performs
+L1 loss: |actual - predicted| across all points
+L2 loss: |actual - predicted|^2 across all points
+
+overfitting: a model that fits
+regularization: penalizing hypotheses that are more complex
+holdout cross-validation: splitting data to a learning set and training set
+k-fold cross-validation: train on k sets, test with x
+
+LIBRARY FOR MACHINE LEARNING:
+scikit-learn
+
+reinforcement learning (learning from experience, a balance betweeen exploration and eploitation):
+rewards given based on actions taken that results in a change in state
+markov decision model:
+from a state you have action choices
+and based on what is the state change, assign reward
+
+
+1. set of states (s)
+2. set of actions (a)
+3. transition model (s,a,s')
+4. reward model (s,a,s')
+
+Q-learning
+learning a function Q(s,a), that estimates the reward you get from taking an action from a given state:
+1. start with Q(s,a)=0 for all s,a
+2. when we take an action and receive a reward, estimate Q(s,a) based on current reward and expected future rewards (thinking of net reward)
+3. update Q(s,a) to take into account old estimate as well as new estimate
+
+
+unsupervised learning:
+given input data without any additional feedback, learn patterns
+
+e.g. k-mean clustering
+define a cluster center, assign points to the cluster based on the distance between the cluster center and the group
+
+
+
+
+
+
+Neural Networks -
+
+Language - Understanding natural language and natural language processing
